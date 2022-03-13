@@ -1,6 +1,7 @@
 # Design Tokens
 
-Trying to create design tokens that can be used in CSS, SCSS, and Javascript/Typescript? 
+Trying to create design tokens that can be used in CSS, SCSS, and
+Javascript/Typescript?
 
 _Yeah, me too._
 
@@ -8,20 +9,29 @@ _Yeah, me too._
 
 In the end I hope that there will be two ways that users can use this library:
 
-1. In code, by importing the relevant items / functions and building it themselves or 
-2. By using a CLI tool with a config file (aiming for it to be TS, but considering JSON) to generate it the necessary files in one shot.
+1. In code, by importing the relevant items / functions and building it
+   themselves or
+2. By using a CLI tool with a config file (aiming for it to be TS, but
+   considering JSON) to generate it the necessary files in one shot.
 
 ## Usage
 
 Currently the code can be used with the following examples.
 
+**_NOTE_**: This needs to be hard updated to reflect changes.
+
 ```ts
-import { Stylesheet, CssToken, MediaQuery, TokenType } from '//design-tokens-url.ts';
+import {
+  MediaQuery,
+  Stylesheet,
+  Token,
+  TokenType,
+} from './mod.ts';
 // Creates a new stylesheet
 const stylesheet = new Stylesheet();
 // create the tokens.
-const primaryToken = new CssToken('primary-color', '#fecc99');
-const spacingToken = new CssToken('gap', '4px', TokenType.SIZE);
+const primaryToken = new Token('primary-color', '#fecc99');
+const spacingToken = new Token('gap', '4px', 'size');
 // Necessary breakpoints
 const darkMediaQuery = MediaQuery.findOrCreate('prefers-color-scheme: dark');
 const mdBreakpointQuery = MediaQuery.findOrCreate('min-width: 370px');
@@ -35,9 +45,11 @@ stylesheet.addTokens(primaryToken, spacingToken);
 await stylesheet.build({});
 ```
 
-This will generate two files, `tokens.js` and `tokens.css` which have the following values:
+This will generate two files, `tokens.js` and `tokens.css` which have the
+following values:
 
-**Note**: this values will appear "flattened" (not minimized) when they are output. These have been modified to be more readable.
+**Note**: this values will appear "flattened" (not minimized) when they are
+output. These have been modified to be more readable.
 
 ```js
 export const colorPrimaryColor = 'var(--color-primary-color)';
@@ -61,4 +73,5 @@ export const sizeGap = 'var(--size-gap)';
 }
 ```
 
-These files can be bundled as part of your design-tokens package and distributed out.
+These files can be bundled as part of your design-tokens package and distributed
+out.

@@ -1,107 +1,109 @@
-import {
-  ensureDir
-} from 'https://deno.land/std@0.127.0/fs/mod.ts';
-import {
-  getArgs,
-  camelCase
-} from './util.ts';
-import CssToken from './csstoken.ts';
+import { ensureDir } from 'https://deno.land/std@0.127.0/fs/mod.ts';
+import Token from './token.ts';
+import Selector from './selector.ts';
 import MediaQuery from './media.ts';
-
-const args = getArgs();
 
 interface BuildOptions {
   directory?: string;
-  fileName?: string | Record<'js' | 'css', string>; 
+  fileName?: string | Record<'js' | 'css', string>;
 }
 
 export default class Stylesheet {
-  tokens: Map<string, CssToken> = new Map();
   queries: Map<string, MediaQuery> = new Map();
+  selectors: Set<Selector> = new Set();
 
-  constructor() {}
+  #root = new Selector();
 
-  addToken(token: CssToken): typeof this {
-    if(this.tokens.has(token.key))
-      console.warn(`The token ${token.key} already exists in the stylsheet`);
-    else {
-      this.tokens.set(token.key, token);
-      for(const query of token.queries.values()) {
-        this.queries.set(query.query, query);
-      }
-    }
+  constructor() {
+    this.selectors.add(this.#root);
+  }
+
+  addSelector(selector: Selector): typeof this {
+    this.selectors.add(selector);
     return this;
   }
 
-  addMedia(mq: MediaQuery): typeof this {
-    // Do we have the current query in the stylesheet?
-    if(this.queries.has(mq.query)) {
-      args.verbose ?
-        console.warn(`Stylesheet already has MediaQuery (${mq.query})`) :
-        null;
-    }
-    else
-      this.queries.set(mq.query, mq);
+  addSelectors(...args: Selector[]): typeof this {
+    args.forEach((sel) => this.addSelector(sel));
     return this;
   }
 
-  addTokens(...args: CssToken[]): typeof this {
-    for(const token of args) {
-      this.addToken(token);
-    }
+  addToken(token: Token, selector: Selector = this.#root): typeof this {
+    if (!this.selectors.has(selector)) this.selectors.add(selector);
+    selector.addToken(token);
     return this;
   }
 
-  async build({
+  addTokens(selector: Selector = this.#root, ...tokens: Token[]): typeof this {
+    if (!this.selectors.has(selector)) this.selectors.add(selector);
+    tokens.forEach((token) => this.addToken(token));
+    return this;
+  }
+
+  addQuery(query: MediaQuery): typeof this {
+    if (!this.queries.has(query.query)) this.queries.set(query.query, query);
+    return this;
+  }
+
+  build() {
+    return {
+      css: this.buildCss(),
+      js: this.buildJs(),
+    };
+  }
+
+  async buildAndWrite({
     fileName = 'tokens',
-    directory
+    directory,
   }: BuildOptions) {
-    const filenames = {
-      js: `${fileName}.js`,
-      css: `${fileName}.css`
-    }
-    if(directory) {
+    const outputFiles = {
+      js: fileName + '.js',
+      css: fileName + '.css',
+    };
+
+    if (directory) {
       await ensureDir(directory);
-      filenames.js = `${directory}/${filenames.js}`;
-      filenames.css = `${directory}/${filenames.css}`;
+      outputFiles.js = `${directory}/${outputFiles.js}`;
+      outputFiles.css = `${directory}/${outputFiles.css}`;
     }
-    if(typeof fileName === 'object') {
-      filenames.js = `${directory}/${fileName.js}`;
-      filenames.css = `${directory}/${fileName.css}`
-    }
+
+    const outputs = this.build();
+
     return Promise.allSettled([
-      this.buildCss(filenames.css),
-      this.buildJs(filenames.js)
+      Deno.writeTextFile(outputFiles.js, outputs.js)
+        .then(() => true)
+        .catch((e) => {
+          console.error(e);
+          return false;
+        }),
+      Deno.writeTextFile(outputFiles.css, outputs.css)
+        .then(() => true)
+        .catch((e) => {
+          console.error(e);
+          return false;
+        }),
     ]);
   }
 
-  private buildCss(outfile: string) {
-    let content = ':root {';
-
-    for(const token of this.tokens.values()) {
-      content += token.getCssKey() + ':' + token.value + ';';
+  private buildCss() {
+    let output = '';
+    for (const selector of this.selectors.values()) {
+      output += selector.build();
     }
-    content += '}\n';
-    for(const query of this.queries.values()) {
-      content += `@media ${query.screenOnly ? 'screen and ' : ''} (${query.query}) { :root {`;
-      for(const token of query.tokens.values()) {
-        content += `${token.getCssKey()}: ${token.value};`;
+    output += '\n\n';
+    for (const mq of this.queries.values()) {
+      if (mq.hasTokens()) {
+        output += mq.build();
       }
-      content += '}}\n';
     }
-    return Deno.writeTextFile(outfile, content)
-      .then(() => true)
-      .catch(() => false);
+    return output;
   }
 
-  private buildJs(outfile: string) {
-    let content = '';
-    for(const token of this.tokens.values()) {
-      content += `export const ${camelCase(token.type+'-'+token.key)} = 'var(${token.getCssKey()})';`;
+  private buildJs() {
+    let output = '';
+    for (const token of this.#root.tokens.values()) {
+      output += token.toJsToken() + ';\n';
     }
-    console.log('writing', content, ' to ', outfile);
-    return Deno.writeTextFile(outfile, content)
-      .then(() => true)
-      .catch(() => false);
+    return output;
   }
 }
