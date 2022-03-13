@@ -15,13 +15,15 @@ In the end I hope that there will be two ways that users can use this library:
 
 Currently the code can be used with the following examples.
 
+__*NOTE*__: This needs to be hard updated to reflect changes.
+
 ```ts
-import { Stylesheet, CssToken, MediaQuery, TokenType } from '//design-tokens-url.ts';
+import { Stylesheet, Token, MediaQuery, TokenType } from '//design-tokens-url.ts';
 // Creates a new stylesheet
 const stylesheet = new Stylesheet();
 // create the tokens.
-const primaryToken = new CssToken('primary-color', '#fecc99');
-const spacingToken = new CssToken('gap', '4px', TokenType.SIZE);
+const primaryToken = new Token('primary-color', '#fecc99');
+const spacingToken = new Token('gap', '4px', TokenType.SIZE);
 // Necessary breakpoints
 const darkMediaQuery = MediaQuery.findOrCreate('prefers-color-scheme: dark');
 const mdBreakpointQuery = MediaQuery.findOrCreate('min-width: 370px');

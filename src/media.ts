@@ -3,44 +3,44 @@ import {
   normalizeCssQuery,
   getArgs
 } from './util.ts';
-import CssToken from './csstoken.ts';
+import Token from './token.ts';
+import Selector from './selector.ts';
+import { Buildable } from './buildable.ts';
 
 const args = getArgs();
 
-export default class MediaQuery {
+export default class MediaQuery implements Buildable {
 
-  // Start static properties
-  static queries = new Map();
+  static queries = new Map<string, MediaQuery>();
+  #selector = new Selector(':root');
 
-  static findOrCreate(query: string): MediaQuery {
+  constructor(public query: string, public screenOnly = false) {
     const normalized = normalizeCssQuery(query);
-    if(MediaQuery.queries.has(normalized)) return MediaQuery.queries.get(normalized);
-    const mq = new MediaQuery(normalized);
-    MediaQuery.queries.set(normalized, mq);
-    return mq;
-  }
-
-  tokens: Map<string, CssToken> = new Map();
-
-  /**
-   * 
-   * @param query the query
-   * @param screenOnly screen only?
-   * @description do not use this directly. instead use the `MediaQuery.findOrCreate()` method
-   */
-  constructor(public query: string, public screenOnly = true) {
-  }
-
-  addValue(token: CssToken): typeof this {
-    // If we already have the token, give a warning.
-    if(this.tokens.has(token.key)) {
-      args.verbose ? 
-        console.warn(`Token ${token.key} already exists in MediaQuery (${this.query}).`) :
-        null;
-      return this;
+    if(MediaQuery.queries.has(normalized+'_'+screenOnly)) {
+      return MediaQuery.queries.get(normalized) as MediaQuery;
     }
+    MediaQuery.queries.set(normalized+'_'+screenOnly, this);
+    this.query = normalized;  
+  }
 
-    this.tokens.set(token.key, token);
+  addToken(token: Token): typeof this {
+    this.#selector.addToken(token);
     return this;
   }
+
+  build() {
+    let output = `@media${this.screenOnly ? ' screen and': ''} (${this.query}) {`
+    output += '\n' + this.#selector.build();
+    output += '\n}'
+    return output;
+  }
+
+  hasTokens(): boolean {
+    return this.#selector.tokens.size > 0;
+  }
+
+  get selector() {
+    return this.#selector.tokens;
+  }
 }
+ 
