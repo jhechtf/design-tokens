@@ -3,6 +3,7 @@ import { camelCase } from './util.ts';
 
 export default class Token {
   queries: Set<MediaQuery> = new Set();
+  public value: string | Token;
   /**
    * @param key key is meant to be a css-compatible variable name, e.g. "some-string-here".
    * This will become camelCased when exported to TS variables
@@ -11,9 +12,10 @@ export default class Token {
    */
   constructor(
     public key: string,
-    public value: string | Token,
+    value: string | number | Token,
     public type = 'color',
   ) {
+    this.value = typeof value === 'number' ? `${value}px` : value;
   }
 
   addMediaQueryValue(mq: MediaQuery, value: string | Token): typeof this {
@@ -41,4 +43,8 @@ export default class Token {
       camelCase(this.type + '-' + this.key)
     } = 'var(${this.getCssKey()})'`;
   }
+}
+
+export interface TokenConsumer {
+  addToken(token: Token): unknown;
 }

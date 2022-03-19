@@ -7,6 +7,9 @@ Deno.test('Basic Token Test', () => {
     primaryToken.toJsToken(),
     'export const colorPrimary = \'var(--color-primary)\'',
   );
+
+  const numberToken = new Token('number', 4);
+  assertEquals(numberToken.toCssValue(), '4px');
   assertEquals(primaryToken.toCssValue(), 'blue');
   assertEquals(primaryToken.getCssKey(), '--color-primary');
 });
