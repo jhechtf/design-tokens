@@ -69,6 +69,7 @@ export default class Stylesheet {
 
     const outputs = this.build();
 
+    console.info('Writing ' + JSON.stringify(outputFiles));
     return Promise.allSettled([
       Deno.writeTextFile(outputFiles.js, outputs.js)
         .then(() => true)
@@ -93,7 +94,7 @@ export default class Stylesheet {
     output += '\n\n';
     for (const mq of this.queries.values()) {
       if (mq.hasTokens()) {
-        output += mq.build();
+        output += mq.build() + '\n';
       }
     }
     return output;
