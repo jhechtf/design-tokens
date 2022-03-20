@@ -1,4 +1,4 @@
-# Design Tokens
+# Raven (Design Token Generator)
 
 Trying to create design tokens that can be used in CSS, SCSS, and
 Javascript/Typescript?
@@ -21,12 +21,7 @@ Currently the code can be used with the following examples.
 **_NOTE_**: This needs to be hard updated to reflect changes.
 
 ```ts
-import {
-  MediaQuery,
-  Stylesheet,
-  Token,
-  TokenType,
-} from './mod.ts';
+import { MediaQuery, Stylesheet, Token, TokenType } from './mod.ts';
 // Creates a new stylesheet
 const stylesheet = new Stylesheet();
 // create the tokens.
@@ -75,3 +70,81 @@ export const sizeGap = 'var(--size-gap)';
 
 These files can be bundled as part of your design-tokens package and distributed
 out.
+
+## Installation
+
+To install the cli run the following script:
+
+```
+$ deno install --allow-write --allow-read https://raw.githubusercontent.com/jhechtf/design-tokens/mainline/src/buildable.ts --name raven
+```
+
+This should enable the Raven CLI to run without error. If you want to limit the
+scope to where to CLI can read/write to I would definitely encourage that.
+
+### Usage
+
+After installing creating a `config.ts` file with the following content
+
+```ts
+import type {
+  Config,
+} from 'https://raw.githubusercontent.com/jhechtf/design-tokens/mod.ts';
+
+export default {
+  colors: {
+    primary: 'blue',
+    secondary: 'orange',
+    blue: {
+      100: '#33ff99',
+    },
+  },
+  size: {
+    sm: 4,
+    md: 8,
+    lg: 12,
+    xl: 16,
+  },
+  variants: {
+    'prefers-color-scheme: dark': {
+      colors: {
+        primary: 'lightblue',
+        secondary: 'paleorange',
+      },
+    },
+  },
+} as Config;
+```
+
+Then run
+
+```
+raven --config config.ts
+```
+
+**Notes:** You can export singular instances in the config, such as
+
+```ts
+export const colors = {
+  primary: 'red',
+  secondary: 'puprple',
+};
+
+export const sizes = {
+  sm: 4,
+  md: 8,
+  lg: 12,
+};
+
+export const variants = {
+  'prefers-color-scheme: dark': {
+    primary: 'hsl(0,0, 50%)',
+  },
+};
+```
+
+## FAQ
+
+### Raven?
+
+I like ravens and crows.

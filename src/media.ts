@@ -1,9 +1,9 @@
-import { getArgs, normalizeCssQuery } from './util.ts';
+import { normalizeCssQuery } from './util.ts';
 import Token from './token.ts';
 import Selector from './selector.ts';
 import { Buildable } from './buildable.ts';
 
-const args = getArgs();
+// const args = getArgs();
 
 export default class MediaQuery implements Buildable {
   static queries = new Map<string, MediaQuery>();
@@ -27,7 +27,7 @@ export default class MediaQuery implements Buildable {
     let output = `@media${
       this.screenOnly ? ' screen and' : ''
     } (${this.query}) {`;
-    output += '\n' + this.#selector.build();
+    output += '\n  ' + this.#selector.build().split('\n').join('\n  ');
     output += '\n}';
     return output;
   }
