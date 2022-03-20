@@ -18,26 +18,32 @@ In the end I hope that there will be two ways that users can use this library:
 
 Currently the code can be used with the following examples.
 
-**_NOTE_**: This needs to be hard updated to reflect changes.
-
 ```ts
-import { MediaQuery, Stylesheet, Token, TokenType } from './mod.ts';
+import { MediaQuery, Stylesheet, Token } from './mod.ts';
 // Creates a new stylesheet
 const stylesheet = new Stylesheet();
 // create the tokens.
 const primaryToken = new Token('primary-color', '#fecc99');
 const spacingToken = new Token('gap', '4px', 'size');
+const blueToken = new Token('blue-100', '#11339e');
 // Necessary breakpoints
-const darkMediaQuery = MediaQuery.findOrCreate('prefers-color-scheme: dark');
-const mdBreakpointQuery = MediaQuery.findOrCreate('min-width: 370px');
+const darkMediaQuery = new MediaQuery('prefers-color-scheme: dark');
+const mdBreakpointQuery = new MediaQuery('min-width: 370px');
 // Primary token has a dark mode value
-primaryToken.addMediaQueryValue(darkMediaQuery, '#99ff44');
+primaryToken.addMediaQueryValue(darkMediaQuery, blueToken);
 // Spacing token changes on "medium" screensize"
 spacingToken.addMediaQueryValue(mdBreakpointQuery, '8px');
 // Add the tokens to the stylesheet
-stylesheet.addTokens(primaryToken, spacingToken);
+stylesheet
+  .addToken(primaryToken)
+  .addToken(spacingToken)
+  .addToken(blueToken);
+// Add the media queries
+stylesheet
+  .addQuery(darkMediaQuery)
+  .addQuery(mdBreakpointQuery);
 // build the stylesheet + JS tokens
-await stylesheet.build({});
+await stylesheet.buildAndWrite({});
 ```
 
 This will generate two files, `tokens.js` and `tokens.css` which have the
@@ -49,19 +55,22 @@ output. These have been modified to be more readable.
 ```js
 export const colorPrimaryColor = 'var(--color-primary-color)';
 export const sizeGap = 'var(--size-gap)';
+export const colorBlue100 = 'var(--color-blue-100)';
 ```
 
 ```css
 :root {
-  --color-primary-color:#fecc99;
-  --size-gap:4px;
+  --color-primary-color: #fecc99;
+  --size-gap: 4px;
+  --color-blue-100: #11339e;
 }
-@media screen and (prefers-color-scheme: dark) { 
+
+@media (prefers-color-scheme: dark) {
   :root {
-    --color-primary-color: #99ff44;
+    --color-primary-color: var(--color-blue-100);
   }
 }
-@media screen and (max-width: 370px) { 
+@media (min-width: 370px) {
   :root {
     --size-gap: 8px;
   }
@@ -76,11 +85,11 @@ out.
 To install the cli run the following script:
 
 ```
-$ deno install --allow-write --allow-read https://raw.githubusercontent.com/jhechtf/design-tokens/mainline/src/buildable.ts --name raven
+$ deno install -A https://raw.githubusercontent.com/jhechtf/design-tokens/mainline/src/cli.ts --name raven
 ```
 
-This should enable the Raven CLI to run without error. If you want to limit the
-scope to where to CLI can read/write to I would definitely encourage that.
+I would recommend using scoped down permission for `--allow-read` and `--allow-write` if able,
+but you would also need to add `--allow-env`
 
 ### Usage
 
