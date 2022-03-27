@@ -48,12 +48,7 @@ export async function getConfigFromImport(loc: string): Promise<Config> {
   }
   const fileUrl = toFileUrl(loc);
   return await import(fileUrl.href)
-    .then((mod) => (mod.default || mod) as Config)
-    .catch((e) => {
-      console.error(e);
-      console.info(`Could not load file ${fileUrl.pathname} in ${Deno.cwd()}`);
-      return {} as Config;
-    });
+    .then((mod) => (mod.default || mod) as Config);
 }
 
 export function parseBaseConfig(
