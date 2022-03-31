@@ -1,24 +1,75 @@
-import yargs from 'https://deno.land/x/yargs@v17.4.0-deno/deno.ts';
-import HelpCommand from './commands/help.ts';
-import VersionCommand from './commands/version.ts';
-import MainCommand from './commands/main.ts';
+import { Command } from './commands/command.skip.ts';
+import {
+  dirname,
+  fromFileUrl,
+  parse,
+  red,
+  resolve,
+  toFileUrl,
+} from '../deps.ts';
 
-yargs(Deno.args)
-  .command({
-    command: VersionCommand.signature,
-    desc: VersionCommand.description,
-    handler: VersionCommand.handler,
-  })
-  .command({
-    command: HelpCommand.signature,
-    desc: HelpCommand.description,
-    handler: HelpCommand.handler,
-  })
-  .command({
-    command: MainCommand.signature,
-    desc: MainCommand.description,
-    handler: MainCommand.handler,
-  })
-  .help()
-  .strictCommands()
-  .parse();
+const COMMAND_DIR = resolve(
+  dirname(fromFileUrl(import.meta.url)),
+  './commands',
+);
+
+const args = parse(Deno.args, {
+  boolean: ['help'],
+  string: ['config'],
+});
+
+/**
+ * 1. build commands object
+ * 2. lookup current command
+ * 3. run handler if found
+ * 4. error out otherwise.
+ */
+
+// Make the commands object
+const commands = new Map<string, Command>();
+
+for await (const commandEntry of Deno.readDir(COMMAND_DIR)) {
+  if (
+    commandEntry.isFile &&
+    commandEntry.name.endsWith('.ts') &&
+    !commandEntry.name.includes('.skip')
+  ) {
+    // Load the command
+    const command = await import(
+      toFileUrl(resolve(COMMAND_DIR, commandEntry.name)).href
+    )
+      // Turn the import into a command object
+      .then((res) => (res.default || res) as Command);
+    // Set the command
+    if (!commands.has(command.signature)) {
+      commands.set(command.signature, command);
+    } else {
+      console.error(
+        red('ERROR'),
+        `Command signature ${command.signature} already exists.`,
+      );
+    }
+  }
+}
+
+if (args.help) {
+  console.info('These are the registered commands you can choose from\n');
+  for (const [command, obj] of commands.entries()) {
+    let commandName = command;
+    if (command == '*') commandName = '[default]';
+    console.info(`${commandName}\t${obj.description}`);
+  }
+  Deno.exit();
+}
+
+const [command = '*'] = args._ as string[];
+
+const handler = commands.get(command);
+
+if (handler) {
+  if (handler.handler.constructor.name === 'AsyncFunction') {
+    await handler.handler(args);
+  } else handler.handler(args);
+} else {
+  console.info('Unrecognized command');
+}

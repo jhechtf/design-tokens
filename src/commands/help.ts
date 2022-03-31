@@ -1,7 +1,7 @@
-import { Command } from './command.ts';
+import { Command } from './command.skip.ts';
 
 export default {
-  signature: 'assist',
+  signature: 'help',
   description: 'Outputs the help dialog to get you started',
   handler: () => {
     console.log(
@@ -18,7 +18,8 @@ export default {
     --directory [dir] Where to output the generated files. Defaults to the current directory
     --file-name [name] What the generated JS + CSS files should be named.
     --help Shows this help message
-    --version shows the current version of the CLI`,
+    --version shows the current version of the CLI
+    `,
     );
   },
 } as Command;

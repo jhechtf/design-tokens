@@ -1,4 +1,4 @@
-import { ensureDir } from 'https://deno.land/std@0.127.0/fs/mod.ts';
+import { ensureDir } from '../deps.ts';
 import Token from './token.ts';
 import Selector from './selector.ts';
 import MediaQuery from './media.ts';
@@ -69,7 +69,6 @@ export default class Stylesheet {
 
     const outputs = this.build();
 
-    console.info('Writing ' + JSON.stringify(outputFiles));
     return Promise.allSettled([
       Deno.writeTextFile(outputFiles.js, outputs.js)
         .then(() => true)

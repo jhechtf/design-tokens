@@ -88,8 +88,8 @@ To install the cli run the following script:
 $ deno install -A https://raw.githubusercontent.com/jhechtf/design-tokens/mainline/src/cli.ts --name raven
 ```
 
-I would recommend using scoped down permission for `--allow-read` and `--allow-write` if able,
-but you would also need to add `--allow-env`
+I would recommend using scoped down permission for `--allow-read` and
+`--allow-write` if able, but you would also need to add `--allow-env`
 
 ### Usage
 
