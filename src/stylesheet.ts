@@ -49,6 +49,7 @@ export default class Stylesheet {
     return {
       css: this.buildCss(),
       js: this.buildJs(),
+      scss: this.buildScss(),
     };
   }
 
@@ -59,12 +60,14 @@ export default class Stylesheet {
     const outputFiles = {
       js: fileName + '.js',
       css: fileName + '.css',
+      scss: `${fileName}.scss`,
     };
 
     if (directory) {
       await ensureDir(directory);
       outputFiles.js = `${directory}/${outputFiles.js}`;
       outputFiles.css = `${directory}/${outputFiles.css}`;
+      outputFiles.scss = `${directory}/${outputFiles.scss}`;
     }
 
     const outputs = this.build();
@@ -82,6 +85,10 @@ export default class Stylesheet {
           console.error(e);
           return false;
         }),
+      Deno.writeTextFile(
+        outputFiles.scss,
+        outputs.scss,
+      ),
     ]);
   }
 
@@ -96,6 +103,15 @@ export default class Stylesheet {
         output += mq.build() + '\n';
       }
     }
+    return output;
+  }
+
+  private buildScss() {
+    let output = '';
+    for (const token of this.#root.tokens.values()) {
+      output += `\n$${token.getCssKey().slice(2)}: ${token.value} !default;`;
+    }
+    console.info(output);
     return output;
   }
 
