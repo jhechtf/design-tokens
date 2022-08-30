@@ -18,4 +18,4 @@ export {
   white,
 } from 'https://deno.land/std@0.132.0/fmt/colors.ts';
 
-export const VERSION = '0.1.0';
+export const VERSION = '0.2.0';
