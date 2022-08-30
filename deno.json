@@ -3,5 +3,8 @@
     "options": {
       "singleQuote": true
     }
+  },
+  "tasks": {
+    "test-coverage": "rm -rf ./coverage && deno test --coverage=coverage && deno coverage --lcov --output=lcov.info coverage && code-coverage"
   }
 }

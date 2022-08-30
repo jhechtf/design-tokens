@@ -14,7 +14,7 @@ Deno.test('Testing', () => {
   // We should expect to have two values.
   assertEquals(
     Object.values(output).length,
-    2,
+    3,
   );
 
   assertNotEquals(
