@@ -2,7 +2,7 @@ import Stylesheet from './stylesheet.ts';
 import { Config } from './types.d.ts';
 import { CliArgs } from './cli/cliArgs.ts';
 
-export interface Content{
+export interface Content {
   name: string;
   content: string;
 }
