@@ -1,17 +1,10 @@
 import { Command } from './commands/command.skip.ts';
 import {
-  dirname,
-  fromFileUrl,
   parse,
   red,
-  resolve,
-  toFileUrl,
 } from '../deps.ts';
 
-const COMMAND_DIR = resolve(
-  dirname(fromFileUrl(import.meta.url)),
-  './commands',
-);
+const COMMAND_DIR = new URL('./commands', import.meta.url);
 
 const args = parse(Deno.args, {
   boolean: ['help'],
@@ -36,7 +29,7 @@ for await (const commandEntry of Deno.readDir(COMMAND_DIR)) {
   ) {
     // Load the command
     const command = await import(
-      toFileUrl(resolve(COMMAND_DIR, commandEntry.name)).href
+      new URL(`./commands/${commandEntry.name}`, COMMAND_DIR.href).href,
     )
       // Turn the import into a command object
       .then((res) => (res.default || res) as Command);

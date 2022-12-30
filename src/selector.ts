@@ -6,7 +6,7 @@ export default class Selector implements Buildable {
     public readonly selector: string = ':root',
   ) {}
 
-  addToken(token: Token): typeof this {
+  addToken(token: Token): Selector {
     this.tokens.add(token);
     return this;
   }

@@ -18,29 +18,29 @@ export default class Stylesheet {
     this.selectors.add(this.#root);
   }
 
-  addSelector(selector: Selector): typeof this {
+  addSelector(selector: Selector): Stylesheet {
     this.selectors.add(selector);
     return this;
   }
 
-  addSelectors(...args: Selector[]): typeof this {
+  addSelectors(...args: Selector[]): Stylesheet {
     args.forEach((sel) => this.addSelector(sel));
     return this;
   }
 
-  addToken(token: Token, selector: Selector = this.#root): typeof this {
+  addToken(token: Token, selector: Selector = this.#root): Stylesheet {
     if (!this.selectors.has(selector)) this.selectors.add(selector);
     selector.addToken(token);
     return this;
   }
 
-  addTokens(selector: Selector = this.#root, ...tokens: Token[]): typeof this {
+  addTokens(selector: Selector = this.#root, ...tokens: Token[]): Stylesheet {
     if (!this.selectors.has(selector)) this.selectors.add(selector);
     tokens.forEach((token) => this.addToken(token));
     return this;
   }
 
-  addQuery(query: MediaQuery): typeof this {
+  addQuery(query: MediaQuery): Stylesheet {
     if (!this.queries.has(query.query)) this.queries.set(query.query, query);
     return this;
   }
@@ -92,6 +92,7 @@ export default class Stylesheet {
     ]);
   }
 
+  // TODO: Move all of the private methods out and into their own thing.
   private buildCss() {
     let output = '';
     for (const selector of this.selectors.values()) {
@@ -111,7 +112,6 @@ export default class Stylesheet {
     for (const token of this.#root.tokens.values()) {
       output += `\n$${token.getCssKey().slice(2)}: ${token.value} !default;`;
     }
-    console.info(output);
     return output;
   }
 

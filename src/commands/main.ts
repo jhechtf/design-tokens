@@ -13,7 +13,7 @@ export default {
     ...args
   }) => {
     try {
-      // Grab the config
+      // Grab the config -- onConfigResolved
       const config = await getConfigFromImport(configPath);
       // Make the base stylesheet
       const styles = new Stylesheet();
@@ -28,7 +28,9 @@ export default {
           parseBaseConfig(subConfig, mq);
         }
       }
+      // onStylesLoaded?
 
+      // Begin onWrite
       const responses = await styles.buildAndWrite({
         directory: args.directory,
         fileName: args.fileName,
@@ -37,6 +39,7 @@ export default {
       if (responses.every((e) => e.status === 'fulfilled' && e.value)) {
         console.info(green(`Successfully wrote files`));
       }
+      // end onWrite
     } catch (e) {
       if (e instanceof Error) {
         console.error(red('ERROR'), e.name, e.message);

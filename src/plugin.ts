@@ -1,6 +1,6 @@
 import Stylesheet from './stylesheet.ts';
 import { Config } from './types.d.ts';
-import { CliArgs } from './cli/cliArgs.ts';
+import { BaseCliArgs } from './cli/cliArgs.ts';
 
 export interface Content {
   name: string;
@@ -8,9 +8,9 @@ export interface Content {
 }
 
 export default interface Plugin {
-  onConfigResolved?(config: Config): void;
-  onStylesLoaded?(stylesheets: Stylesheet[]): void;
-  onWrite?<T>(args: CliArgs<T>, stylesheets: Stylesheet[]): Promise<Content>;
+  onConfigResolved?(config: Config, args: BaseCliArgs): void;
+  onStylesLoaded?(stylesheets: Stylesheet[], args: BaseCliArgs): void;
+  onWrite?<T>(args: BaseCliArgs, stylesheets: Stylesheet[]): Promise<Content>;
 }
 
 export default class Plugin {

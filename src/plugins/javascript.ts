@@ -1,10 +1,10 @@
 import Plugin from '../plugin.ts';
 import { Config } from '../types.d.ts';
-import { CliArgs } from '../cli/cliArgs.ts';
+import { CliArgs, BaseCliArgs } from '../cli/cliArgs.ts';
 import Stylesheet from '../stylesheet.ts';
 
 export default class JSPlugin extends Plugin {
-  onConfigResolved(config: Config) {
+  onConfigResolved(config: Config, args: BaseCliArgs) {
     console.info('CONFIG', config);
   }
   onStylesLoaded() {
