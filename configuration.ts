@@ -3,7 +3,7 @@ import { Config } from './mod.ts';
 export default {
   color: {
     primary: 'blue',
-    something: 'orange'
+    something: 'orange',
   },
   size: {
     font: {

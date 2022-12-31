@@ -1,3 +1,4 @@
+import { CliArgs } from './cli/cliArgs.ts';
 interface RavenArgs {
   noJavascript?: boolean;
   noScss?: boolean;
@@ -7,14 +8,14 @@ interface RavenArgs {
   dir?: string;
 }
 
-export default function raven({
-  noCss = false,
-  noJavascript = false,
-  noScss = false,
+export default function raven<T>({
   configuration = 'config.ts',
   outdir = 'dist',
-  dir = '.'
-}: RavenArgs) {
+  dir = '.',
+  'no-css': noCss = false,
+  'no-javascript': noJs = false,
+  'no-scss': noScss = false,
+}: CliArgs<T>) {
   // Testing this thing.
-  console.info(noCss,noJavascript,noScss,configuration,outdir,dir);
+  console.info(configuration, outdir, dir, noCss, noJs, noScss);
 }

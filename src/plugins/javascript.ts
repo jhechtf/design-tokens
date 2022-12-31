@@ -1,19 +1,29 @@
 import Plugin from '../plugin.ts';
 import { Config } from '../types.d.ts';
-import { CliArgs, BaseCliArgs } from '../cli/cliArgs.ts';
+import { BaseCliArgs, CliArgs } from '../cli/cliArgs.ts';
 import Stylesheet from '../stylesheet.ts';
+import { injectable, registry } from '../../deps.ts';
 
+@injectable()
+@registry([
+  {
+    token: 'Plugin',
+    useToken: JSPlugin,
+  },
+])
 export default class JSPlugin extends Plugin {
-  onConfigResolved(config: Config, args: BaseCliArgs) {
-    console.info('CONFIG', config);
-  }
-  onStylesLoaded() {
-    console.info('Something Something');
-  }
-  onWrite<T>(args: CliArgs<T>, stylesheets: Stylesheet[]) {
+  onWrite(_args: BaseCliArgs, stylesheets: Stylesheet[]) {
+    let output = '';
+    for (const stylesheet of stylesheets) {
+      for (const selectors of stylesheet.selectors.values()) {
+        for (const token of selectors.tokens.values()) {
+          output += token.toJsToken() + ';\n';
+        }
+      }
+    }
     return Promise.resolve({
-      name: 'tokens',
-      content: 'fjkdfjkdfj',
+      name: 'forod.js',
+      content: output,
     });
   }
 }
