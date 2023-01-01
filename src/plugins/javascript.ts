@@ -12,7 +12,7 @@ import { injectable, registry } from '../../deps.ts';
   },
 ])
 export default class JSPlugin extends Plugin {
-  onWrite(_args: BaseCliArgs, stylesheets: Stylesheet[]) {
+  onWrite(args: BaseCliArgs, stylesheets: Stylesheet[]) {
     let output = '';
     for (const stylesheet of stylesheets) {
       for (const selectors of stylesheet.selectors.values()) {
@@ -21,8 +21,11 @@ export default class JSPlugin extends Plugin {
         }
       }
     }
+    const {
+      'file-name': fileName = 'tokens'
+    } = args;
     return Promise.resolve({
-      name: 'forod.js',
+      name: `${fileName}.js`,
       content: output,
     });
   }

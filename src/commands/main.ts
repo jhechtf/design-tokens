@@ -45,8 +45,7 @@ export default {
       const failures = results.filter((res) => res.status === 'rejected');
       failures.forEach((fail) =>
         console.warn(
-          `Plugin failed to load with error: ${
-            fail.status === 'rejected' && fail.reason
+          `Plugin failed to load with error: ${fail.status === 'rejected' && fail.reason
           }`,
         )
       );
@@ -73,16 +72,13 @@ export default {
       manager.loadStyles([styles], args as BaseCliArgs);
 
       // Begin onWrite
-      const responses = await styles.buildAndWrite({
-        directory: args.directory,
-        fileName: args.fileName,
-      });
+      // const responses = await styles.buildAndWrite({
+      //   directory: args.directory,
+      //   fileName: args.fileName,
+      // });
 
       await manager.write(args as BaseCliArgs, [styles]);
 
-      if (responses.every((e) => e.status === 'fulfilled' && e.value)) {
-        console.info(green(`Successfully wrote files`));
-      }
       // end onWrite
     } catch (e) {
       if (e instanceof Error) {
