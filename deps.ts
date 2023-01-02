@@ -7,6 +7,7 @@ export {
   fromFileUrl,
   resolve,
   toFileUrl,
+  join,
 } from 'https://deno.land/std@0.132.0/path/mod.ts';
 
 export { ensureDir, exists } from 'https://deno.land/std@0.132.0/fs/mod.ts';

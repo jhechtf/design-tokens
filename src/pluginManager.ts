@@ -15,21 +15,21 @@ export default class PluginManager {
     this.#plugins = plugins;
   }
   loadConfig(cfg: Config, args: BaseCliArgs) {
-    for (let plugin of this.#plugins) {
+    for (const plugin of this.#plugins) {
       if (plugin.onConfigResolved) {
         plugin.onConfigResolved(cfg, args);
       }
     }
   }
   loadStyles(stylesheets: Stylesheet[], args: BaseCliArgs) {
-    for (let plugin of this.#plugins) {
+    for (const plugin of this.#plugins) {
       if (plugin.onStylesLoaded) {
         plugin.onStylesLoaded(stylesheets, args);
       }
     }
   }
   async write(args: BaseCliArgs, stylesheets: Stylesheet[]) {
-    for (let plugin of this.#plugins) {
+    for (const plugin of this.#plugins) {
       if (plugin.onWrite) {
         const content = await plugin.onWrite(args, stylesheets);
         const directory = args.directory;
