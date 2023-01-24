@@ -19,8 +19,9 @@ export default class ScssPlugin extends Plugin {
     for (const stylesheet of stylesheets) {
       for (const selector of stylesheet.selectors.values()) {
         for (const token of selector.tokens.values()) {
-          output += `\n$${token.getCssKey().slice(2)
-            }: ${token.value} !default;`;
+          output += `\n$${
+            token.getCssKey().slice(2)
+          }: ${token.value} !default;`;
         }
       }
     }

@@ -1,6 +1,6 @@
 import Stylesheet from './stylesheet.ts';
 import { Config } from './types.d.ts';
-import { BaseCliArgs, CliArgs } from './cli/cliArgs.ts';
+import { BaseCliArgs } from './cli/cliArgs.ts';
 
 export interface Content {
   name: string;

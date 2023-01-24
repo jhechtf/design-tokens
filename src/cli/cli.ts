@@ -1,5 +1,6 @@
 import { injectable, injectAll } from '../../deps.ts';
 import Command from './command.ts';
+
 @injectable()
 export default class Cli {
   commands: Map<string, { run(): number }> = new Map();

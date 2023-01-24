@@ -11,7 +11,7 @@ import { injectable, registry } from '../../deps.ts';
   },
 ])
 export default class CssPlugin extends Plugin {
-  async onWrite(args: BaseCliArgs, stylesheets: Stylesheet[]) {
+  onWrite(args: BaseCliArgs, stylesheets: Stylesheet[]) {
     let output = '';
     for (const stylesheet of stylesheets) {
       for (const selector of stylesheet.selectors.values()) {
@@ -26,12 +26,12 @@ export default class CssPlugin extends Plugin {
     }
 
     const {
-      'file-name': fileName = 'tokens'
+      'file-name': fileName = 'tokens',
     } = args;
 
-    return {
+    return Promise.resolve({
       name: `${fileName}.css`,
       content: output,
-    };
+    });
   }
 }

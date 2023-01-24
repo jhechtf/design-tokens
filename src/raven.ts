@@ -15,9 +15,8 @@ export default function raven<T>({
   'no-css': noCss = false,
   'no-javascript': noJs = false,
   'no-scss': noScss = false,
-  plugins: pluginsArg,
+  plugins: _pluginsArg,
 }: CliArgs<T>) {
-  const args = [];
   // Testing this thing.
   console.info(configuration, outdir, dir, noCss, noJs, noScss);
 }

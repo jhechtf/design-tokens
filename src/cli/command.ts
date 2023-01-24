@@ -10,5 +10,4 @@ export default interface Command {
   handler(args: Args): Promise<number>;
 }
 export default class Command {
-
 }

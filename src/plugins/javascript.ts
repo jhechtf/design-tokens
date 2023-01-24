@@ -1,6 +1,5 @@
 import Plugin from '../plugin.ts';
-import { Config } from '../types.d.ts';
-import { BaseCliArgs, CliArgs } from '../cli/cliArgs.ts';
+import { BaseCliArgs } from '../cli/cliArgs.ts';
 import Stylesheet from '../stylesheet.ts';
 import { injectable, registry } from '../../deps.ts';
 
@@ -22,7 +21,7 @@ export default class JSPlugin extends Plugin {
       }
     }
     const {
-      'file-name': fileName = 'tokens'
+      'file-name': fileName = 'tokens',
     } = args;
     return Promise.resolve({
       name: `${fileName}.js`,

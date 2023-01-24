@@ -1,7 +1,7 @@
 import { Command } from './command.skip.ts';
 
 import { getConfigFromImport, parseBaseConfig } from '../util.ts';
-import { container, green, red } from '../../deps.ts';
+import { container, red } from '../../deps.ts';
 import PluginManager from '../pluginManager.ts';
 
 import { MediaQuery, Stylesheet } from '../../mod.ts';
@@ -45,7 +45,8 @@ export default {
       const failures = results.filter((res) => res.status === 'rejected');
       failures.forEach((fail) =>
         console.warn(
-          `Plugin failed to load with error: ${fail.status === 'rejected' && fail.reason
+          `Plugin failed to load with error: ${
+            fail.status === 'rejected' && fail.reason
           }`,
         )
       );
