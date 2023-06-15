@@ -3,6 +3,7 @@ on:
 
 jobs:
   testing:
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -10,6 +11,7 @@ jobs:
       - run: deno test
 
   format:
+    name: Format Checker
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

@@ -18,7 +18,7 @@ export default class Token {
     this.value = typeof value === 'number' ? `${value}px` : value;
   }
 
-  addMediaQueryValue(mq: MediaQuery, value: string | Token): typeof this {
+  addMediaQueryValue(mq: MediaQuery, value: string | Token): Token {
     if (typeof value === 'string') {
       value = new Token(this.key, value, this.type);
     } else value = new Token(this.key, value);

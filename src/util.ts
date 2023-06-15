@@ -42,11 +42,17 @@ export function camelCase(str: string): string {
  * @returns Returns a Config object to be used via the CLI.
  */
 export async function getConfigFromImport(loc: string): Promise<Config> {
+  // Get the current wokring directory
   const cwd = Deno.cwd();
+  // Check if the location is not absolute.
   if (!isAbsolute(loc)) {
+    // If not, join the cwd and the location
     loc = join(cwd, loc);
   }
+  // Turn the location into a file url
   const fileUrl = toFileUrl(loc);
+  // Import the file, if it has a default export use it, otherwise consider
+  // the whole thing as the config.
   return await import(fileUrl.href)
     .then((mod) => (mod.default || mod) as Config);
 }

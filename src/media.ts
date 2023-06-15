@@ -18,7 +18,7 @@ export default class MediaQuery implements Buildable {
     this.query = normalized;
   }
 
-  addToken(token: Token): typeof this {
+  addToken(token: Token): MediaQuery {
     this.#selector.addToken(token);
     return this;
   }
